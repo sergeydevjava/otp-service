@@ -1,0 +1,8 @@
+{
+  "body": {
+    "length": 3,
+    "ttl": 20,
+    "resendAttempts": 32,
+    "resendTimeout": 10
+  }
+}

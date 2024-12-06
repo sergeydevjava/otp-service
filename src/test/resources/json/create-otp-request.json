@@ -1,0 +1,11 @@
+{
+  "body": {
+    "processId": "123e4567-e89b-42d3-a456-556642440000",
+    "telegramChatId": "tgId",
+    "message": "message",
+    "length": 4,
+    "ttl": 40,
+    "resendAttempts": 3,
+    "resendTimeout": 40
+  }
+}
