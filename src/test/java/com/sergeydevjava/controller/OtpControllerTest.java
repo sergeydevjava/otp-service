@@ -9,6 +9,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,13 +37,7 @@ public class OtpControllerTest extends AbstractTest {
         String jsonResponse = createOtp.andReturn().getResponse().getContentAsString();
         CommonResponse<?> commonResponse = objectMapper.readValue(jsonResponse, new TypeReference<CommonResponse<?>>() {});
 
-        assertEquals(7L, commonResponse.getValidationErrors().size());
-        assertEquals(
-                Set.of("body.resendAttempts", "body.length", "body.ttl", "body.resendTimeout", "body.telegramChatId", "body.processId", "body.message"),
-                commonResponse.getValidationErrors().stream()
-                        .map(ValidationError::getField)
-                        .collect(Collectors.toSet())
-        );
+        checkValidationError(commonResponse.getValidationErrors(), Set.of("body.resendAttempts", "body.length", "body.ttl", "body.resendTimeout", "body.telegramChatId", "body.processId", "body.message"));
     }
 
     @Test
@@ -63,10 +58,14 @@ public class OtpControllerTest extends AbstractTest {
         String jsonResponse = checkOtp.andReturn().getResponse().getContentAsString();
         CommonResponse<?> commonResponse = objectMapper.readValue(jsonResponse, new TypeReference<CommonResponse<?>>() {});
 
-        assertEquals(2L, commonResponse.getValidationErrors().size());
+        checkValidationError(commonResponse.getValidationErrors(), Set.of("body.processId", "body.otp"));
+    }
+
+    private static void checkValidationError(List<ValidationError> commonResponse, Set<String> invalidFields) {
+        assertEquals(invalidFields.size(), commonResponse.size());
         assertEquals(
-                Set.of("body.processId", "body.otp"),
-                commonResponse.getValidationErrors().stream()
+                invalidFields,
+                commonResponse.stream()
                         .map(ValidationError::getField)
                         .collect(Collectors.toSet())
         );
